@@ -1,47 +1,34 @@
-file_path = "books/frankenstein.txt"
+import sys
+if len(sys.argv) < 2:
+    print("Usage: python3 main.py <path_to_book>")
+    sys.exit(1)
+book_path = sys.argv[1]
+from stats import (
+    count_words,
+    get_chars_dict,
+    sort_char_dict
+)
 
 def main():
-    print(f"--- Begin report of {file_path} ___\n")
-    word_count(file_path)
-    char_count_report(file_path)
-    print("--- End report ---")
+    #book_path = "books/frankenstein.txt"
+    text = get_book_text(book_path)
+    num_words = count_words(text)
+    chars_dict = get_chars_dict(text)
+    char_sorted_list = sort_char_dict(chars_dict)
+    print_report(book_path, num_words, char_sorted_list)
 
-def read_file(path):
-    with open(path) as file:    
-        return file.read()
+def get_book_text(book_fp):
+    with open(book_fp, 'r') as book_file:
+        return book_file.read()
 
-def word_count(path):
-    words = read_file(path).split()
-    print(f"{len(words)} words found in the document\n")
-
-def character_count(path):
-    char_counts = {}
-    lower_text = read_file(path).lower()
-    for char in lower_text:
-        if char not in char_counts:
-            char_counts[char] = 1
-        else:
-            char_counts[char] += 1
-    return char_counts
-
-def char_count_report(path):
-    char_count_list = []
-    char_count_dict = character_count(path)
-
-    for key in char_count_dict:
-        if key.isalpha():
-            char_dict = {
-                "char": key,
-                "num" : char_count_dict[key]
-            }
-            char_count_list.append(char_dict)
-
-    char_count_list.sort(reverse=True, key=sort_on)
-    
-    for dict in char_count_list:
-        print(f"The character '{dict["char"]}' was found {dict["num"]} times")
-
-def sort_on(dict):
-    return dict["num"]
+def print_report(book_path, num_words, char_sorted_list):
+    print("============ BOOKBOT ============")
+    print(f"Analyzing book found at {book_path}...")
+    print("----------- Word Count ----------")
+    print(f"Found {num_words} total words")
+    print("----------- Character Count ----------")
+    for item in char_sorted_list:
+        print(f"{item['char']}: {item['num']}")
+    print("============= END ===============")
 
 main()
